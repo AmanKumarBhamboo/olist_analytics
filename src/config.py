@@ -7,6 +7,6 @@ def get_db_url():
         import streamlit as st
         return st.secrets["db_url"]
     except Exception:
-        return os.getenv("OLIST_DB_URL", "postgresql://apple@localhost:5432/olist")
+        return os.getenv("OLIST_DB_URL", "postgresql:///olist")
 
 DB_URL = get_db_url()
