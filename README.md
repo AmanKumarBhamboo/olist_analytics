@@ -1,7 +1,7 @@
 # Olist Customer Churn — Analytics Project
 
 End-to-end customer analytics for the public [Olist Brazilian E-Commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).  
-Cleans raw CSV data, exports to PostgreSQL, then provides an interactive Streamlit dashboard for customer retention, churn, lifetime value, and satisfaction metrics.
+Cleans raw CSV data, exports to PostgreSQL, then computes retention, churn, lifetime value, and satisfaction metrics via SQL.
 
 ---
 
@@ -26,20 +26,14 @@ The dataset contains ~100k orders made at Olist (a Brazilian marketplace) betwee
 ## Project Structure
 
 ```
-├── src/                    # Reusable Python modules
-│   ├── config.py           # Environment-based configuration
-│   └── database.py         # Engine, query runner, data loaders
-├── dashboard/              # Streamlit dashboard
-│   ├── app.py              # Entry point — run with `streamlit run`
-│   ├── kpi_cards.py        # KPI metric computations
-│   └── charts.py           # Plotly chart query & rendering
 ├── notebooks/
 │   └── EDA.ipynb           # Data cleaning pipeline
 ├── sql/
-│   └── analysis.sql        # SQL analysis queries
+│   ├── analysis.sql        # SQL analysis queries
+│   └── setup.sql           # State name normalization
 ├── raw_data/               # Original CSV files (unchanged)
 ├── requirements.txt
-├── .env.example
+├── .env
 ├── .gitignore
 └── README.md
 ```
@@ -66,8 +60,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 # 4. Configure the database URL
-cp .env.example .env
-# Edit .env:  OLIST_DB_URL=postgresql://user:password@localhost:5432/olist
+# Edit .env:  OLIST_DB_URL=postgresql://user:password@host:5432/olist
 ```
 
 ### Database Setup
@@ -78,20 +71,15 @@ createdb olist
 
 # 2. Run the EDA notebook to clean CSVs and export to PostgreSQL
 #    Open notebooks/EDA.ipynb in Jupyter and run all cells.
-#    This loads raw CSVs, handles missing values & duplicates, and
-#    calls df.to_sql() to populate 9 tables.
+#    This loads raw CSVs, handles missing values & duplicates, maps
+#    state abbreviations to full names, and exports 9 tables.
 
-# 3. (Optional) Run analysis queries
+# 3. (Optional) Run setup SQL for state name normalization
+psql -d olist -f sql/setup.sql
+
+# 4. Run analysis queries
 psql -d olist -f sql/analysis.sql
 ```
-
-### Launch Dashboard
-
-```bash
-streamlit run dashboard/app.py
-```
-
-Opens at **http://localhost:8501**.
 
 ---
 
@@ -191,19 +179,6 @@ Not calculable — the Olist dataset does not include effort survey data.
 
 ---
 
-## Dashboard Features
-
-| Section | Content |
-|---|---|
-| **Sidebar filters** | Year range slider, multi-select states and product categories |
-| **KPI row** | CRR, RPR, Churn, Avg LTV, CSAT, NPS — all respond to filters |
-| **Chart row 1** | Top 10 states by revenue (bar) + Revenue trend over years (line) |
-| **Chart row 2** | Customers acquired per month (bar) + Best month each year (bar) |
-| **Chart row 3** | Top 10 product categories by revenue (horizontal bar) + Review score distribution (bar) |
-| **Expandable tables** | CRR by year, monthly revenue, payment type distribution, delivery performance, top 3 states × top 3 categories |
-
----
-
 ## SQL Analysis
 
 `sql/analysis.sql` contains standalone queries for:
@@ -212,7 +187,7 @@ Not calculable — the Olist dataset does not include effort survey data.
 - Top 3 states with their top 3 product categories
 - Monthly customer acquisition
 - Most profitable month per year
-- CRR, RPR, Churn, LTV, CSAT, NPS (same formulas as the dashboard)
+- CRR, RPR, Churn, LTV, CSAT, NPS
 
 Run with:
 
@@ -230,5 +205,4 @@ psql -d olist -f sql/analysis.sql
 | Data processing | pandas, numpy |
 | Database | PostgreSQL 16 |
 | SQL toolkit | SQLAlchemy 2.0 |
-| Visualization | Plotly, Streamlit |
 | Data cleaning | Jupyter Notebook |
