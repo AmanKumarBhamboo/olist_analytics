@@ -1,4 +1,8 @@
 """Olist Customer Analytics Dashboard — Streamlit entry point."""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 from src.database import run_query, load_filter_options
 from dashboard.kpi_cards import build_filters, get_crr, get_rpr, get_churn, get_ltv, get_csat, get_nps
