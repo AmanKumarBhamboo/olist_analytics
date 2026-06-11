@@ -1,4 +1,12 @@
-"""Project-wide configuration loaded from environment variables."""
+"""Project-wide configuration loaded from environment variables or Streamlit secrets."""
 import os
 
-DB_URL = os.getenv("OLIST_DB_URL", "postgresql://apple@localhost:5432/olist")
+def get_db_url():
+    """Return the database URL, checking Streamlit secrets first, then env vars."""
+    try:
+        import streamlit as st
+        return st.secrets["db_url"]
+    except Exception:
+        return os.getenv("OLIST_DB_URL", "postgresql://apple@localhost:5432/olist")
+
+DB_URL = get_db_url()

@@ -4,7 +4,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
-from src.database import run_query, load_filter_options
+from sqlalchemy import text
+from src.database import run_query, load_filter_options, get_engine
 from dashboard.kpi_cards import build_filters, get_crr, get_rpr, get_churn, get_ltv, get_csat, get_nps
 from dashboard.charts import (
     top_states_chart, revenue_trend_chart, customer_acquisition_chart,
@@ -12,6 +13,25 @@ from dashboard.charts import (
 )
 
 st.set_page_config(page_title="Olist Customer Analytics", layout="wide")
+
+# ---- Database connection check ----
+try:
+    with get_engine().connect() as conn:
+        conn.execute(text("SELECT 1"))
+except Exception as e:
+    st.error(
+        "Could not connect to the PostgreSQL database.\n\n"
+        "**If running locally:** make sure PostgreSQL is running and the "
+        "`OLIST_DB_URL` environment variable (or `.env` file) is set correctly.\n\n"
+        "**If running on Streamlit Cloud:** add your database URL in "
+        "**Settings → Secrets** as:\n\n"
+        "```toml\n"
+        'db_url = "postgresql://user:password@host:5432/olist"\n'
+        "```\n\n"
+        "---\n"
+        f"`{e}`"
+    )
+    st.stop()
 
 # ---- Load filter options ----
 all_years, all_states, all_categories = load_filter_options()
