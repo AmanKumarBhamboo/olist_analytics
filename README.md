@@ -32,6 +32,7 @@ The dataset contains ~100k orders made at Olist (a Brazilian marketplace) betwee
 │   ├── analysis.sql        # SQL analysis queries
 │   └── setup.sql           # State name normalization
 ├── raw_data/               # Original CSV files (unchanged)
+├── dashboard_ss/           # Tableau dashboard screenshots
 ├── requirements.txt
 ├── .env
 ├── .gitignore
@@ -194,6 +195,23 @@ Run with:
 ```bash
 psql -d olist -f sql/analysis.sql
 ```
+
+---
+
+## Tableau Dashboard
+
+View the interactive dashboard on Tableau Public:
+
+[**Olist Analytics Dashboard**](https://public.tableau.com/app/profile/aman.bhamboo/viz/OlistAnalyticsDashboard_17812419259250/OlistExecutiveOverview?publish=yes)
+
+### Screenshots
+
+| Page | Preview |
+|------|---------|
+| **Executive Overview** — KPIs, revenue trend, orders by status, review scores, top categories | ![Executive Overview](dashboard_ss/Screenshot%202026-06-13%20at%2001.28.44.png) |
+| **Geographic Analysis** — state revenue map, top/bottom states, customer density, freight costs | ![Geographic Analysis](dashboard_ss/Screenshot%202026-06-13%20at%2001.28.56.png) |
+| **Customer Analysis** — acquisition trend, cohort retention, repeat purchase distribution, LTV by state | ![Customer Analysis](dashboard_ss/Screenshot%202026-06-13%20at%2001.29.04.png) |
+| **Fulfillment & Delivery** — delivery time distribution, on-time vs late by state, payment methods, installments | ![Fulfillment & Delivery](dashboard_ss/Screenshot%202026-06-13%20at%2001.29.17.png) |
 
 ---
 
